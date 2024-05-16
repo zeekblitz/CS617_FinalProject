@@ -1,0 +1,57 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final</title>
+    <style>
+        .chartBox {
+            width: 700px;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"
+        integrity="sha512-vc58qvvBdrDR4etbxMdlTt4GBQk1qjvyORR2nrsPsFPyrs+/u5c3+1Ct6upOgdZoIl7eq6k3a1UPDSNAQi/32A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@3.1.0/dist/rough.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-rough@0.2.0"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
+
+    <div class="chartBox">
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        var file = 'BostonPetData.csv';
+        d3.csv(file).then(function(dataPoints){
+            // sort the data by neighborhood
+            byNeighborhood = dataPoints.slice().sort((a, b) => d3.ascending(a.neighborhood, b.neighborhood));
+
+            // separate the data into arrays by neighborhood
+            var neighborhoods = [[]];
+            var currentNeighborhood = byNeighborhood[0].neighborhood;
+            for (let i = 0; i < byNeighborhood.length; i++) {
+                if (byNeighborhood[i].neighborhood == currentNeighborhood) {
+                    neighborhoods[neighborhoods.length - 1].push(byNeighborhood[i]);
+                } else {
+                    neighborhoods.push([]);
+                    currentNeighborhood = byNeighborhood[i].neighborhood;
+                    neighborhoods[neighborhoods.length - 1].push(byNeighborhood[i]);
+                }
+            }
+
+            // 
+
+            console.log(neighborhoods[neighborhoods.length - 1]);
+        });
+
+    </script>
+
+    <script src = "doughnuts.js"></script>
+</body>
+
+</html>
