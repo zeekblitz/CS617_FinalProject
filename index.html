@@ -21,7 +21,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-rough@0.2.0"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
 
-    <div class="chartBox" id="donutBox"></div>
+    
+
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        
+        <div class="chartBox" id="donutBox">
+            <h1 style="text-align:center;">Is the Boston Terrier Bostons favorite dog breed?</h1>
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <img src="bostonTerrierWaterColor.jpg" alt="https://media.posterlounge.com/img/products/760000/755468/755468_poster.jpg" height="725px">
+            </div>
+            <h2 style="text-align:center;">Lets find out!</h2>
+            <h3 style="text-align:center;">And while we're here, we can take a look at the most popular names</h3>
+        </div>
+    </div>
 
     <script>
         var file = 'BostonPetData.csv';
@@ -77,13 +89,13 @@
                 blue: 'rgb(0,61,165)',
                 purple: 'rgb(130,7,108)'
             };
-            
+
             var breedLabels;
             var datas;
             var canv;
 
             for (let i = 0; i < topBreeds.length; i++) {
-                
+                // empty the arrays and assign the new values
                 breedLabels = [];
                 datas = [];
                 for (let j = 0; j < topBreeds[i].length; j++) {
@@ -91,7 +103,7 @@
                     datas.push(topBreeds[i][j][1]);
                 }
 
-                // create the div
+                // create the canvas
                 canv = document.createElement('canvas');
                 canv.id = neighborhoodLabels[i];
                 document.getElementById('donutBox').appendChild(canv);
@@ -143,18 +155,8 @@
                         }
                     }
                 });
-
             }
-
-
-
-
         });
-
-
-
-
-
     </script>
 </body>
 
