@@ -112,6 +112,8 @@
                 var ctx = document.getElementById(neighborhoodLabels[i]).getContext('2d');
                 Chart.defaults.global.defaultFontFamily = '"Indie Flower", cursive';
                 Chart.defaults.global.defaultFontSize = 16;
+                //Chart.defaults.plugins.legend.position = 'left';
+                //Chart.overrides[type].plugins.legend.legend.position = 'left';
                 var chart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
@@ -147,11 +149,22 @@
                     options: {
                         title: {
                             display: true,
+                            position: 'left',
+                            fontSize: 24,
                             text: neighborhoodLabels[i],
                         },
                         animation: {
                             animateScale: true,
                             animateRotate: true
+                        },
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                fontsize: 200,
+                                fontColor: 'black',
+                                padding: 20
+                            }
                         }
                     }
                 });
