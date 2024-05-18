@@ -21,13 +21,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-rough@0.2.0"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
 
-    <div class="chartBox">
-        <canvas id="Allston"></canvas>
-    </div>
+    <div class="chartBox" id="donutBox"></div>
 
     <script>
         var file = 'BostonPetData.csv';
-
+        var neighborhoodLabels = [];
         var topBreeds = [];
 
         d3.csv(file).then(function (dataPoints) {
@@ -37,18 +35,19 @@
             // separate the data into arrays by neighborhood
             var neighborhoods = [[]];
             var currentNeighborhood = byNeighborhood[0].neighborhood;
+            neighborhoodLabels.push(currentNeighborhood);
             for (let i = 0; i < byNeighborhood.length; i++) {
                 if (byNeighborhood[i].neighborhood == currentNeighborhood) {
                     neighborhoods[neighborhoods.length - 1].push(byNeighborhood[i]);
                 } else {
                     neighborhoods.push([]);
                     currentNeighborhood = byNeighborhood[i].neighborhood;
+                    neighborhoodLabels.push(currentNeighborhood);
                     neighborhoods[neighborhoods.length - 1].push(byNeighborhood[i]);
                 }
             }
 
             // determine the top 5 breeds for each neighborhood
-
             for (let i = 0; i < neighborhoods.length; i++) {
                 var breedCounts = {};
                 for (let j = 0; j < neighborhoods[i].length; j++) {
@@ -68,7 +67,7 @@
                 topBreeds.push(sortable.slice(0, 5));
             }
 
-            console.log(topBreeds);
+            //console.log(topBreeds);
 
             var chartColors = {
                 // MBTA https://www.color-hex.com/color-palette/1018674
@@ -78,63 +77,78 @@
                 blue: 'rgb(0,61,165)',
                 purple: 'rgb(130,7,108)'
             };
-
-            var labels = [];
-            var datas = [];
             
-            for (let i = 0; i < topBreeds[0].length; i++) {
-                labels.push(topBreeds[0][i][0]);
-                datas.push(topBreeds[0][i][1]);
+            var breedLabels;
+            var datas;
+            var canv;
+
+            for (let i = 0; i < topBreeds.length; i++) {
+                
+                breedLabels = [];
+                datas = [];
+                for (let j = 0; j < topBreeds[i].length; j++) {
+                    breedLabels.push(topBreeds[i][j][0]);
+                    datas.push(topBreeds[i][j][1]);
+                }
+
+                // create the div
+                canv = document.createElement('canvas');
+                canv.id = neighborhoodLabels[i];
+                document.getElementById('donutBox').appendChild(canv);
+
+                // create the chart
+                var ctx = document.getElementById(neighborhoodLabels[i]).getContext('2d');
+                Chart.defaults.global.defaultFontFamily = '"Indie Flower", cursive';
+                Chart.defaults.global.defaultFontSize = 16;
+                var chart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: breedLabels,
+                        datasets: [{
+                            data: datas,
+                            backgroundColor: [
+                                chartColors.red,
+                                chartColors.orange,
+                                chartColors.green,
+                                chartColors.blue,
+                                chartColors.purple
+                            ],
+                            borderColor: [
+                                chartColors.red,
+                                chartColors.orange,
+                                chartColors.green,
+                                chartColors.blue,
+                                chartColors.purple
+                            ],
+                            borderWidth: 3,
+                            rough: {
+                                roughness: 2,
+                                bowing: .5,
+                                fillStyle: 'zigzag',
+                                fillWeight: 0.25,
+                                hachureAngle: Math.floor(Math.random() * 90),
+                                hachureGap: 7.5
+                            }
+                        }]
+                    },
+                    plugins: [ChartRough],
+                    options: {
+                        title: {
+                            display: true,
+                            text: neighborhoodLabels[i],
+                        },
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                });
+
             }
 
-            var neighborhoodLabel = byNeighborhood[0].neighborhood;
 
-            var ctx = document.getElementById('Allston').getContext('2d');
-            Chart.defaults.global.defaultFontFamily = '"Indie Flower", cursive';
-            Chart.defaults.global.defaultFontSize = 16;
-            var chart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: datas,
-                        backgroundColor: [
-                            chartColors.red,
-                            chartColors.orange,
-                            chartColors.green,
-                            chartColors.blue,
-                            chartColors.purple
-                        ],
-                        borderColor: [
-                            chartColors.red,
-                            chartColors.orange,
-                            chartColors.green,
-                            chartColors.blue,
-                            chartColors.purple
-                        ],
-                        borderWidth: 3,
-                        rough: {
-                            roughness: 2,
-                            bowing: .5,
-                            fillStyle: 'zigzag',
-                            fillWeight: 0.25,
-                            hachureAngle: Math.floor(Math.random() * 90),
-                            hachureGap: 7.5
-                        }
-                    }]
-                },
-                plugins: [ChartRough],
-                options: {
-                    title: {
-                        display: true,
-                        text: neighborhoodLabel
-                    },
-                    animation: {
-                        animateScale: true,
-                        animateRotate: true
-                    }
-                }
-            });
+
+
         });
 
 
