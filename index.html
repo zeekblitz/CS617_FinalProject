@@ -21,24 +21,33 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-rough@0.2.0"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
 
-    
-
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        
         <div class="chartBox" id="donutBox">
-            <h1 style="text-align:center;">Is the Boston Terrier Bostons favorite dog breed?</h1>
+            <h1 style="text-align:center; font-family: Indie Flower, cursive;">
+                Is the Boston Terrier Bostons favorite dog breed?
+            </h1>
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <img src="bostonTerrierWaterColor.jpg" alt="https://media.posterlounge.com/img/products/760000/755468/755468_poster.jpg" height="725px">
+                <img src="bostonTerrierWaterColor.jpg"
+                    alt="https://media.posterlounge.com/img/products/760000/755468/755468_poster.jpg" height="725px">
             </div>
-            <h2 style="text-align:center;">Lets find out!</h2>
-            <h3 style="text-align:center;">And while we're here, we can take a look at the most popular names</h3>
+            <h2 style="text-align:center; font-family: Indie Flower, cursive;">
+                Lets find out!
+            </h2>
+            <h3 style="text-align:center; font-family: Indie Flower, cursive;">
+                And while we're here, we can take a look at the most popular names
+            </h3>
         </div>
+        <hr>
+        <p style="text-align:center; font-family: Indie Flower, cursive; font-size: large;">
+            So it would appear, based on the data above, that the Boston Terrier is not the most popular breed in Boston.
+        </p>
     </div>
 
     <script>
         var file = 'BostonPetData.csv';
         var neighborhoodLabels = [];
         var topBreeds = [];
+        var topNames = [];
 
         d3.csv(file).then(function (dataPoints) {
             // sort the data by neighborhood
@@ -79,7 +88,27 @@
                 topBreeds.push(sortable.slice(0, 5));
             }
 
-            //console.log(topBreeds);
+            // determine the top 5 names for each neighborhood
+            for (let i = 0; i < neighborhoods.length; i++) {
+                var nameCounts = {};
+                for (let j = 0; j < neighborhoods[i].length; j++) {
+                    if (neighborhoods[i][j].Name in nameCounts) {
+                        nameCounts[neighborhoods[i][j].Name]++;
+                    } else {
+                        nameCounts[neighborhoods[i][j].Name] = 1;
+                    }
+                }
+                var sortable = [];
+                for (var name in nameCounts) {
+                    sortable.push([name, nameCounts[name]]);
+                }
+                sortable.sort(function (a, b) {
+                    return b[1] - a[1];
+                });
+                topNames.push(sortable.slice(0, 5));
+            }
+
+            //console.log(topNames);
 
             var chartColors = {
                 // MBTA https://www.color-hex.com/color-palette/1018674
@@ -90,86 +119,104 @@
                 purple: 'rgb(130,7,108)'
             };
 
+            var colors = [
+                chartColors.red,
+                chartColors.orange,
+                chartColors.green,
+                chartColors.blue,
+                chartColors.purple
+            ];
+
+            roughFormat = {
+                roughness: 2,
+                bowing: .5,
+                fillStyle: 'zigzag',
+                fillWeight: 0.25,
+                hachureAngle: 45,//Math.floor(Math.random() * 90),
+                hachureGap: 7.5
+            };
+
             var breedLabels;
-            var datas;
+            var nameLabels;
+            var breedData;
+            var nameData;
             var canv;
+            var hr;
 
             for (let i = 0; i < topBreeds.length; i++) {
                 // empty the arrays and assign the new values
                 breedLabels = [];
-                datas = [];
+                breedData = [];
+                nameLabels = [];
+                nameData = [null,null,null,null,null];
                 for (let j = 0; j < topBreeds[i].length; j++) {
                     breedLabels.push(topBreeds[i][j][0]);
-                    datas.push(topBreeds[i][j][1]);
+                    breedData.push(topBreeds[i][j][1]);
+                    nameLabels.push((j+1) + '. ' + topNames[i][j][0]);
+                    nameData.push(topNames[i][j][1]);
                 }
+                breedData = breedData.concat([null,null,null,null,null]);
+
+                var labs = breedLabels.concat(nameLabels);
 
                 // create the canvas
+                hr = document.createElement('hr');
                 canv = document.createElement('canvas');
                 canv.id = neighborhoodLabels[i];
+                document.getElementById('donutBox').appendChild(hr);
                 document.getElementById('donutBox').appendChild(canv);
 
                 // create the chart
                 var ctx = document.getElementById(neighborhoodLabels[i]).getContext('2d');
                 Chart.defaults.global.defaultFontFamily = '"Indie Flower", cursive';
                 Chart.defaults.global.defaultFontSize = 16;
-                //Chart.defaults.plugins.legend.position = 'left';
-                //Chart.overrides[type].plugins.legend.legend.position = 'left';
                 var chart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: breedLabels,
+                        labels: labs,
                         datasets: [{
-                            data: datas,
-                            backgroundColor: [
-                                chartColors.red,
-                                chartColors.orange,
-                                chartColors.green,
-                                chartColors.blue,
-                                chartColors.purple
-                            ],
-                            borderColor: [
-                                chartColors.red,
-                                chartColors.orange,
-                                chartColors.green,
-                                chartColors.blue,
-                                chartColors.purple
-                            ],
+                            data: breedData,
+                            backgroundColor: colors.concat(colors),
+                            borderColor: colors.concat(colors),
                             borderWidth: 3,
-                            rough: {
-                                roughness: 2,
-                                bowing: .5,
-                                fillStyle: 'zigzag',
-                                fillWeight: 0.25,
-                                hachureAngle: Math.floor(Math.random() * 90),
-                                hachureGap: 7.5
-                            }
+                            rough: roughFormat
+                        },
+                        {
+                            data: nameData,
+                            backgroundColor: colors.concat(colors),
+                            borderColor: colors.concat(colors),
+                            borderWidth: 3,
+                            rough: roughFormat
                         }]
                     },
                     plugins: [ChartRough],
                     options: {
                         title: {
                             display: true,
-                            position: 'left',
+                            position: i % 2 == 0 ? 'right' : 'left',
                             fontSize: 24,
                             text: neighborhoodLabels[i],
                         },
                         animation: {
                             animateScale: true,
-                            animateRotate: true
+                            animateRotate: true,
+                            loop: true
                         },
                         legend: {
                             display: true,
-                            position: 'right',
+                            position: i % 2 == 0 ? 'left' : 'right',
+                            maxWidth: 1,
                             labels: {
-                                fontsize: 200,
-                                fontColor: 'black',
-                                padding: 20
+                                textAlign: 'center',
+                                padding: 40,
                             }
                         }
                     }
                 });
             }
         });
+
+        
     </script>
 </body>
 
