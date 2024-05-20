@@ -21,6 +21,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-rough@0.2.0"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
 
+    <audio controls autoplay>
+        <source src="bahaMen.mp3" type="audio/mpeg">
+    </audio>
+
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
         <div class="chartBox" id="donutBox">
             <h1 style="text-align:center; font-family: Indie Flower, cursive;">
@@ -39,7 +43,8 @@
         </div>
         <hr>
         <p style="text-align:center; font-family: Indie Flower, cursive; font-size: large;">
-            So it would appear, based on the data above, that the Boston Terrier is not the most popular breed in Boston.
+            So it would appear, based on the data above, that the Boston Terrier is not the most popular breed in
+            Boston.
         </p>
     </div>
 
@@ -148,14 +153,14 @@
                 breedLabels = [];
                 breedData = [];
                 nameLabels = [];
-                nameData = [null,null,null,null,null];
+                nameData = [null, null, null, null, null];
                 for (let j = 0; j < topBreeds[i].length; j++) {
                     breedLabels.push(topBreeds[i][j][0]);
                     breedData.push(topBreeds[i][j][1]);
-                    nameLabels.push((j+1) + '. ' + topNames[i][j][0]);
+                    nameLabels.push((j + 1) + '. ' + topNames[i][j][0]);
                     nameData.push(topNames[i][j][1]);
                 }
-                breedData = breedData.concat([null,null,null,null,null]);
+                breedData = breedData.concat([null, null, null, null, null]);
 
                 var labs = breedLabels.concat(nameLabels);
 
@@ -216,7 +221,7 @@
             }
         });
 
-        
+
     </script>
 </body>
 
